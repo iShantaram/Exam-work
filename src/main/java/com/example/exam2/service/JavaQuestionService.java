@@ -9,8 +9,11 @@ import java.util.*;
 @Service
 public class JavaQuestionService implements QuestionService {
     private final Set<Question> questions = new HashSet<>();
+    private final Random random;
 
-    public JavaQuestionService() {}
+    public JavaQuestionService() {
+        this.random = new Random();
+    }
 
     @Override
     public Question add(String question, String answer) {
@@ -29,19 +32,22 @@ public class JavaQuestionService implements QuestionService {
         if (questions.remove(question)) {
             return question;
         } else {
-            throw new QuestionNotFoundException("Not found " + question);
+            throw new QuestionNotFoundException("Not found question for remove");
         }
     }
 
     @Override
     public Collection<Question> getAll() {
-        return questions.stream().toList();
+        return questions;
     }
 
     @Override
     public Question getRandomQuestion() {
-        int size = questions.size();
-        Random random = new Random();
-        return new ArrayList<>(getAll()).get(random.nextInt(size));
+        int nextInt = random.nextInt(questions.size());
+        Question q = questions.stream().toList().get(nextInt);
+        if (q == null || questions.isEmpty()) {
+            throw new QuestionNotFoundException("Not any question in service");
+        }
+        return q;
     }
 }
